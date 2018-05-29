@@ -132,7 +132,7 @@ def k_means_clustering(x_input, k, init_centroids):
     updating_centroids_array = reevaluateCenters(x_input, cluster_assignments, k)
     return (cluster_assignments, updating_centroids_array)
 
-def knee_plot():
+def knee_plot_singleIter():
     print "For k = 1 to 10\n"
     k_clusters_array = [1,2,3,4,5,6,7,8,9,10]
     SSE_array = []
@@ -148,10 +148,56 @@ def knee_plot():
 
         #print ("Sum of square error: ")
         # sum of square error after the algorithm runs once
-        #sum_of_square_error(irisData, cluster_assignment, i, updating_centroids)
-
+        (error_total, standardDev) = sum_of_square_error(irisData, knee_cluster_assignment, i, knee_updating_centroids)
+        SSE_array.append(error_total)
+        SD_array.append(standardDev)
         #runs the k means algorithm until the centroid doesn't change anymore
         while (1):
+            (knee_cluster_assignment, knee_updating_centroids) = k_means_clustering(irisData, i, knee_current_centroids)
+            if (np.array_equal(knee_updating_centroids, knee_current_centroids)):
+                knee_final_centroids = knee_updating_centroids
+                #(error_total, standardDev) = (sum_of_square_error(irisData, knee_cluster_assignment, i, knee_final_centroids))
+                #SSE_array.append(error_total)
+                #SD_array.append(standardDev)
+                break
+            knee_current_centroids = knee_updating_centroids
+            knee_counter = knee_counter + 1
+        
+        print "Number of iterations: " + str(knee_counter) + "\n"
+
+    plt.title("Knee Plot: SSE x Number of clusters (Single iteration)")
+    plt.ylabel("Sum of Squared Errors")
+    plt.xlabel("k Clusters value")
+    plt.errorbar(k_clusters_array, SSE_array, yerr=SD_array, fmt='-o')
+    plt.show()
+
+
+def knee_plot_multiIter(maxIter):
+    print "For k = 1 to 10\n"
+    k_clusters_array = [1,2,3,4,5,6,7,8,9,10]
+    SSE_array = []
+    SD_array = []
+
+    for i in k_clusters_array:
+        knee_counter = 1
+        knee_current_centroids = chooseCentroids(irisData, i)
+        knee_init_centroids = knee_current_centroids
+
+        (knee_cluster_assignment, knee_updating_centroids) = k_means_clustering(irisData, i, knee_init_centroids)
+        knee_current_centroids = knee_updating_centroids
+
+        #print ("Sum of square error: ")
+        # sum of square error after the algorithm runs once
+        #(error_total, standardDev) = sum_of_square_error(irisData, knee_cluster_assignment, i, knee_updating_centroids)
+        #SSE_array.append(error_total)
+        #SD_array.append(standardDev)
+        #runs the k means algorithm until the centroid doesn't change anymore
+        while (knee_counter <= maxIter):
+            if (knee_counter == maxIter):
+                (error_total, standardDev) = sum_of_square_error(irisData, knee_cluster_assignment, i, knee_current_centroids)
+                SSE_array.append(error_total)
+                SD_array.append(standardDev)
+                break
             (knee_cluster_assignment, knee_updating_centroids) = k_means_clustering(irisData, i, knee_current_centroids)
             if (np.array_equal(knee_updating_centroids, knee_current_centroids)):
                 knee_final_centroids = knee_updating_centroids
@@ -160,17 +206,15 @@ def knee_plot():
                 SD_array.append(standardDev)
                 break
             knee_current_centroids = knee_updating_centroids
-            #print total_error
             knee_counter = knee_counter + 1
         
         print "Number of iterations: " + str(knee_counter) + "\n"
 
-    plt.title("Knee Plot: SSE x Number of clusters")
+    plt.title("Knee Plot: SSE x Number of clusters (Max_iter = " + str(maxIter) + ")")
     plt.ylabel("Sum of Squared Errors")
     plt.xlabel("k Clusters value")
     plt.errorbar(k_clusters_array, SSE_array, yerr=SD_array, fmt='-o')
-    plt.show()
-        
+    plt.show()        
 
 # here is the main
 irisData = loadData('iris-data.txt')
@@ -206,4 +250,7 @@ print "Number of iterations: " + str(iterationCounter) + "\n"
 
 #--------------------------------------------------------------------------------------------------------------------------
 
-knee_plot()
+knee_plot_singleIter()
+knee_plot_multiIter(2)
+knee_plot_multiIter(10)
+knee_plot_multiIter(100)
