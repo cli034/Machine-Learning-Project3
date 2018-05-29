@@ -132,6 +132,8 @@ def k_means_clustering(x_input, k, init_centroids):
     updating_centroids_array = reevaluateCenters(x_input, cluster_assignments, k)
     return (cluster_assignments, updating_centroids_array)
 
+# Question 2.1
+# Make knee plot after single iteration of k means algorithm
 def knee_plot_singleIter():
     print "For k = 1 to 10\n"
     k_clusters_array = [1,2,3,4,5,6,7,8,9,10]
@@ -171,7 +173,8 @@ def knee_plot_singleIter():
     plt.errorbar(k_clusters_array, SSE_array, yerr=SD_array, fmt='-o')
     plt.show()
 
-
+# Question 2.2
+# Make knee plot after a threshold (after a certain iteration)
 def knee_plot_multiIter(maxIter):
     print "For k = 1 to 10\n"
     k_clusters_array = [1,2,3,4,5,6,7,8,9,10]
@@ -229,7 +232,6 @@ init_centroids = current_centroids
 (cluster_assignment, updating_centroids) = k_means_clustering(irisData, num_clusters, init_centroids)
 current_centroids = updating_centroids
 
-print ("Sum of square error: ")
 # sum of square error after the algorithm runs once
 #sum_of_square_error(irisData, cluster_assignment, num_clusters, updating_centroids)
 
@@ -238,6 +240,9 @@ while (1):
     (cluster_assignment, updating_centroids) = k_means_clustering(irisData, num_clusters, current_centroids)
     if (np.array_equal(updating_centroids, current_centroids)):
         final_centroids = updating_centroids
+        print ("Final set of centroids: ")
+        print final_centroids
+        print ("\nSum of square error: ")
         sum_of_square_error(irisData, cluster_assignment, num_clusters, final_centroids)
         break
     current_centroids = updating_centroids
