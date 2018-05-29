@@ -39,7 +39,7 @@ def sum_of_square_error(dataSet, clusters, k, init_centroids):
             if (clusters[j] == i):
                 temp.append(dataSet[j])
         cluster_group = np.array(temp)
-    
+        
         number = 0.0
         
         total = 0.0
@@ -82,19 +82,29 @@ def chooseCentroids(dataSet, k):
 #to choose a set of new centroids by taking the mean of the cluster set
 def reevaluateCenters(dataSet, clusters, k):
     all_new_centers_list = []
+    
     for i in range(0, k):
         temp = []
         for j in range(0, dataSet.shape[0]):
             if (clusters[j] == i):
                 temp.append(dataSet[j])
         cluster_group = np.array(temp)
-
+        
         #sum_of_square_error(cluster_group, init_centroids)
 
         new_center_list = []
+        #for p in range(0, dataSet.shape[1]):
+            #mean_of_cols = np.mean(cluster_group[:,p])
+            #new_center_list.append(mean_of_cols) 
+        
         for p in range(0, dataSet.shape[1]):
-            mean_of_cols = np.mean(cluster_group[:,p])
-            new_center_list.append(mean_of_cols) 
+            cluster_col = []
+            for l in range(0, cluster_group.shape[0]):
+                cluster_col.append(cluster_group[l][p])
+            cluster_col_array = np.array(cluster_col)
+            mean_of_cols = np.mean(cluster_col_array)
+            new_center_list.append(mean_of_cols)
+
         #new_centers = np.array(new_center_list)
         all_new_centers_list.append(new_center_list)
     
